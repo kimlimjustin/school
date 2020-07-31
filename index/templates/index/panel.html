@@ -1,0 +1,230 @@
+{% extends 'index/layout.html' %}
+{% load index %}
+{% block title %}
+Dashboard
+{% endblock %}
+{% block body %}
+	<div class="side-nav">
+		<h1>Dashboard</h1><hr>
+		<h5>Welcome Back, {{user}}({{usertype}})</h5>
+		<a href="{% url 'logout' %}">Logout</a>
+		<hr>
+		<ul>
+			<li><p id="blog-link">Blog</p></li>
+			<li><p id="classList-link">Classes</p></li>
+			<li><p id="students-link">Students</p></li>
+			<li><p id="teacher-link">Teachers</p></li>
+		</ul>
+		<a href="{% url 'index' %}" id="link-to-home">Home Page</a>
+	</div>
+	<div class="main">
+		<div class="container">
+			<div id="welcome">
+				<center><h1>Welcome Back, {{user}}</h1></center>
+			</div>
+			<div id="blog">
+				<h1>Blogs{% if usertype == "admin" %}<button id="create-blog-button"><i class="fa fa-plus"></i></button>{% endif %}</h1>
+				<div id="create-blog" style="display: none;">
+					<form id="create-blog-form">
+						{% csrf_token %}
+						<div class="form-group">
+							Title:
+							<input type="text" name="blog-title" id="create-blog-title" class="form-control" required>
+						</div>
+						<div class="form-group">
+							Target:
+							<select class="form-control" name="blog-target" id="blog-target" required>
+								{% for target in blogtarget %}
+									<option value="{{target}}">{{target}}</option>
+								{% endfor %}
+							</select>
+						</div>
+						Image:
+						<div class="form-group">
+							<input type="url" name="blog-image" id="blog-image" class="form-control" required>
+						</div>
+						Your Content:
+						<div class="form-group">
+							<textarea class="form-control" name="blog-content" id="blog-content" required></textarea>
+						</div>
+						<div class="form-group">
+							<input type="submit" class="btn btn-dark">
+						</div>
+					</form>
+					<button id="cancel-create-blog" class="btn btn-danger" style="display: none;">Cancel</button>
+				</div>
+				<hr>
+				<a href="{% url 'blog' %}"><h1>See Blogs</h1></a>
+			</div>
+			<div id="classList">
+				<h1>Classes{% if usertype == "admin" %}<button id="create-class-button"><i class="fa fa-plus"></i></button>{% endif %}</h1>
+				<div id="create-class-message"></div>
+				{% if usertype == "admin" %}
+				<div id="create-class" style="display: none;">
+					<form id="create-class-form">
+						{% csrf_token %}
+						<div class="form-group">
+							Class Level: 
+							<select class="form-control" name="classLevel" id="classLevel" required>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+								<option value="6">6</option>
+								<option value="7">7</option>
+								<option value="8">8</option>
+								<option value="9">9</option>
+								<option value="10">10</option>
+								<option value="11">11</option>
+								<option value="12">12</option>
+							</select>
+						</div>
+						<div class="form-group">
+							Class Name:
+							<input type="number" name="className" id="className" min="1" required>
+						</div>
+						<div class="form-group">
+							<input type="submit" class="btn btn-dark">
+						</div>
+					</form>
+					<button class="btn btn-danger" id="cancel-create" style="display: none;">Cancel</button>
+				</div>
+				{% endif %}
+				{% for class in classes %}
+					<div class="class">
+						<div class="card">
+						  <div class="card-body">
+						    <h5 class="card-title">{{class.classLevel}} - {{class.className}}</h5>
+						    <p class="card-text">Teached by: {% if teachers|index:forloop.counter0 %}<ul>{% for teacher in teachers|index:forloop.counter0 %}<li>{{teacher}}</li>{% endfor %}</ul>{% else %}None{% endif %}</p>
+						    <a href="{% url 'edit_class' class.classLevel class.className%}" class="btn btn-dark">See class</a>
+						  </div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+			<div id="students">
+				<h1>Students{% if usertype == "admin" %}<button id="add-student-button"><i class="fa fa-plus"></i></button>{% endif %}</h1>
+				<div id="add-student" style="display: none;">
+					<div id="add-student-message"></div>
+					<form id="add-student-form">
+						{% csrf_token %}
+						<div class="form-group">
+							Username: 
+							<input type="text" name="username" id="add-student-username" required class="form-control">
+						</div>
+						<div class="form-group">
+							Student Email:
+							<input type="email" name="email" id="add-student-email" class="form-control" required>
+						</div>
+						<div class="form-group">
+							Password:
+							<input type="password" name="password" id="add-student-password" class="form-control" required>
+						</div>
+						<div class="form-group">
+							Confirm Password:
+							<div id="confirm-wrong"></div>
+							<input type="password" name="confirmation" id="add-student-password-confirmation" class="form-control" required>
+						</div>
+						<div class="form-group">
+							Student ID:
+							<input type="number" name="studentID" id="add-student-studentID" class="form-control" required>
+						</div>
+						<div class="form-group">
+							Class:
+							<select class="form-control" name="className" id="add-student-class">
+								{% for class in classes %}
+									<option value="{{class.id}}">{{class.classLevel}} - {{class.className}}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div class="form-group">
+							<input type="submit" class="btn btn-dark">
+						</div>
+					</form>
+					<button class="btn btn-danger" id="cancel-add-student" style="display: none;">Cancel</button>
+				</div>
+				<table  id="student-data">
+					<tr>
+						<th>Student ID</th>
+						<th>Name</th>
+						<th>Email</th>
+						<th>Class</th>
+					</tr>
+					{% for student in students %}
+						<tr>
+							<td>{{student.userID}}</td>
+							<td>{{student.username}}</td>
+							<td>{{student.email}}</td>
+							<td>{{studentinfo|index:forloop.counter0}}</td>
+						</tr>
+					{% endfor %}
+				</table>
+			</div>
+			<div id="teacher">
+				<h1>Techers{% if usertype == "admin" %}<button id="add-teacher-button"><i class="fa fa-plus"></i></button>{% endif %}</h1>
+				<div id="add-teacher" style="display: none;">
+					<form id="add-teacher-form">
+						{% csrf_token %}
+						<div class="form-group">
+							Username: 
+							<input type="text" name="username" id="add-teacher-username" required class="form-control">
+						</div>
+						<div class="form-group">
+							Teacher Email:
+							<input type="email" name="email" id="add-teacher-email" class="form-control" required>
+						</div>
+						<div class="form-group">
+							Password:
+							<input type="password" name="password" id="add-teacher-password" class="form-control" required>
+						</div>
+						<div class="form-group">
+							Confirm Password:
+							<div id="confirm-wrong"></div>
+							<input type="password" name="confirmation" id="add-teacher-password-confirmation" class="form-control" required>
+						</div>
+						<div class="form-group">
+							Teacher ID:
+							<input type="number" name="studentID" id="add-teacher-userID" class="form-control" required>
+						</div>
+						<div class="form-group">
+							Class teaching:
+							<select class="form-control" name="className" id="add-teacher-class">
+								<option value="none">Add Later</option>
+								{% for class in classes %}
+									<option value="{{class.id}}">{{class.classLevel}} - {{class.className}}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div class="form-group">
+							<input type="submit" class="btn btn-dark">
+						</div>
+					</form>
+					<button class="btn btn-danger" style="display: none;" id="cancel-add-teacher">Cancel</button>
+				</div>
+				<table id="teacher-data">
+					<tr>
+						<th>Teacher ID</th>
+						<th>Name</th>
+						<th>Email</th>
+					</tr>
+					{% for teacher in allTeacher %}
+						<tr>
+							<td>{{teacher.teacher.userID}}</td>
+							<td>{{teacher.teacher.username}}</td>
+							<td>{{teacher.teacher.email}}</td>
+						</tr>
+					{% endfor %}
+				</table>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block script %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="{% static 'index/dashboard.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+{% endblock %}

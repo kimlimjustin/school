@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css?family=Permanent+Marker&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise");
+@import url("https://fonts.googleapis.com/css?family=Roboto+Condensed");
+@import url("https://fonts.googleapis.com/css?family=Poppins");
+body{
+	margin: 0;
+	padding: 0;
+}
+.brand-name{
+	font-family: 'Permanent Marker';
+	text-align: center;
+}
+
+.navigation{
+	background-color: black;
+}
+.navigation h1{
+	color: white;
+}
+
+.nav-item{
+	margin: 20px;
+}
+
+img{
+	width: 100%;
+}
+.class-level{
+	margin: 15px 0;
+}
+
+.nav-link{
+	font-family: 'Waiting for the Sunrise'
+}
+
+.login{
+	margin-top: 20vh;
+}
+
+.side-nav{
+	padding: 10px 20px;
+	border-right: 5px solid white;
+	background-color: black;
+	color: white;
+	float: left;
+	width: 20vw;
+	z-index: 1;
+}
+
+.main{
+	width: 70vw;
+	float: left;
+
+}
+.side-nav a{
+	text-decoration: none;
+	color: white;
+}
+.side-nav hr{
+	background-color: white;
+}
+.side-nav h1{
+	font-size: 3.5vw;
+}
+
+.side-nav li:hover{
+	cursor: default;
+	color: blue;
+}
+
+.student, .teacher{
+	border: 1px solid black;
+	border-radius: 10px;
+	padding: 5px;
+	background-color: #eee;
+	width: 100%;
+}
+
+#create-class, #add-student, #create-blog, #edit-blog, #add-teacher, #add-stream, #add-assignment{
+	border: 1px solid black;
+	border-radius: 20px;
+	padding: 20px;
+	background-color: #eee;
+}
+.form-control{
+	margin: 10px;
+}
+#confirm-wrong{
+	color: red;
+}
+.profile{
+	background-color: black;
+	color: white;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+.profile-title{
+	text-align: center;
+	font-family: "Permanent Marker";
+	margin: 20px 0;
+}
+.profile-title2{
+	font-family: "Waiting for the Sunrise";
+	margin: 10px;
+}
+.profile-description-since{
+	font-family: "Poppins";
+}
+.profile-description-text{
+	margin: 10px;
+	font-family: "Roboto Condensed";
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+.blogs{
+	margin: 5px 10px;
+	padding: 20px;
+	border: 1px solid #dcd8d8;
+	border-radius: 10px;
+}
+.announcement, .stream, .assignment, .submission{
+	margin-top: 10px;
+	padding: 10px;
+}
+.assignment-body{
+	margin-top: 30px;
+}
+.submission{
+	background-color: #ddd;
+	border: 1px solid black;
+}
+.answer-submission{
+	padding: 5px 15px 0 0;
+}
+@media only screen and (max-width: 1000px){
+	.side-nav{
+		top: 0;
+		width: 100%;
+		border-right: 0px;
+	}
+	.side-nav h1{
+		font-size: 40px;
+	}
+	.side-nav  li {
+		float: left;
+		padding: 2px;
+		border-right: 1px solid white;
+		margin: 0 10px 0 0;
+		padding: 0 10px 0 0;
+	}
+	.side-nav ul{
+		list-style: none;
+	}
+	#link-to-home{
+		display: none;
+	}
+}
+@media only screen and (min-width: 1001px){
+	.side-nav{
+		height: 100vh;
+		position: fixed;
+	}
+	#welcome{
+		top: 50%;
+		left: 50%;
+		position: fixed;
+		transform: translateY(-50%);
+	}
+	.side-nav ul,li{
+		border-bottom: 1px solid white;
+	}
+	.main{
+		margin-left: 20vw;
+	}
+}

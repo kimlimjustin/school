@@ -1,0 +1,13 @@
+{% extends 'index/layout.html' %}
+{% block title %}
+	Error ~ {{message}}
+{% endblock %}
+{% block body %}
+<div class="container">
+	<h1 class="text-center">{{message}}</h1>
+	{% if not signin %}
+	<center><a href="{% url 'index' %}" class="btn btn-dark">Back to Home Page</a></center><br>
+	{% if student %}<center><a href="{% url 'logout' %}" class="btn btn-dark">Log out</a></center>{% endif %}
+	{% endif %}
+</div>
+{% endblock %}

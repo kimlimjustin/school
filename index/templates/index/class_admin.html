@@ -1,0 +1,143 @@
+{% extends 'index/layout.html' %}
+{% load static %}
+{% load index %}
+{% block title %}
+	Class Dashboard
+{% endblock %}
+{% block body %}
+<p style="display: none" id="usertype">{{usertype}}</p>
+	<div class="side-nav">
+		<h1><span id="classlevel">{{class.classLevel}}</span> - <span id="classname">{{class.className}}</span></h1><hr>
+		<a href="{% url 'dashboard' %}">Back to Dashboard</a>
+		<hr>
+		<ul>
+			{% if usertype == "admin" %}<li><p id="teacher-link">Teachers</p></li>{% endif %}
+			<li><p id="assignment-link">Assignment</p></li>
+			<li><p id="stream-link">Announcement</p></li>
+		</ul>
+		<a href="{% url 'index' %}" id="link-to-home">Home Page</a>
+	</div>
+	<div class="main">
+		<div style="display: none;" id="add-teacher">
+			<form id="add-teacher-form">
+				<div class="form-group">
+					Teacher: 
+					<select id="add-teacher-teacher" class="form-control">
+						{% for i in teacherlist %}
+							<option value="{{i.pk}}" required>{{i.user}}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-group">
+					<input type="submit" class="btn btn-dark">
+				</div>
+			</form>
+			<button id="cancel-add-teacher" class="btn btn-danger">Cancel</button>
+		</div>
+		<h1 id="welcome">{{class.classLevel}} - {{class.className}}</h1>
+		<div id="teacher">
+			<h1>Teachers:</h1>
+			<ul id="teacher-lists">
+				{% for teacher in teachers %}
+					<li id="add-teacher-{{teacher.teacher.id}}">{{teacher.teacher}} <button class="btn btn-danger"  onclick="delete_teacher('{{teacher.teacher.id}}', '{{teacher.teacher}}')">Remove</button></li>
+				{% endfor %}
+			</ul>
+			<button id="add-teacher-button" class="btn btn-dark">Add Teacher</button>
+		</div>
+		<div id="assignment">
+			<h1>Assignments<button id="add-assignment-button"><i class="fa fa-plus"></i></button></h1>
+			<div id="add-assignment" style="display: none;">
+				<form id="add-assignment-form">
+					<div class="form-group">
+						Title:
+						<input type="text" name="title" class="form-control" id="add-assignment-title" required>
+					</div>
+					<div class="form-group">
+						Assignment:
+						<input type="text" name="assignment" class="form-control" id="add-assignment-assignment" required>
+					</div>
+					<div class="form-group">
+						Attachment(optional):
+						<input type="url" name="attachment" class="form-control" id="add-assignment-attachment">
+					</div>
+					<div class="form-group">
+						Due date:
+						<input type="date" name="duedate-date" class="form-control" id="add-assignment-duedate-date" required>
+						<input type="time" name="duedate-time" class="form-control" id="add-assignment-duedate-time" required>
+					</div>
+					<div class="form-group">
+						<input type="submit" class="btn btn-dark">
+					</div>
+				</form>
+				<button class="btn btn-danger" id="cancel-add-assignment">Cancel</button>
+			</div>
+			<div id="assignment-list">
+				{% for assignment in assignments %}
+					<div class="card assignment" id="assignment-{{assignment.pk}}">
+						<div class="card-body">
+							<h1 class="card-title">{{assignment.title}}</h1>
+							<p>Created on {{assignment.timestamp}}</p><hr>
+							<div class="card-text">{{assignment.announcement}}</div>
+							{% if assignmentAttachment|index:forloop.counter0 %}
+							<p><strong>Attachment:</strong></p>
+							{% endif %}
+							{% for attachment in assignmentAttachment|index:forloop.counter0 %}
+								<a href="{{attachment}}">{{attachment}}</a>
+							{% endfor %}
+							<br>
+							<button class="btn btn-danger" id="delete-assignment-button" data-delete-assignment="{{assignment.pk}}">Delete</button>
+							<a href="{% url 'assignment' assignment.pk %}" class="btn btn-dark">See Assignment</a>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+		<div id="stream">
+			<h1>Announcement<button id="add-stream-button"><i class="fa fa-plus"></i></button></h1>
+			<div id="add-stream" style="display: none;">
+				<form id="add-stream-form">
+					<div class="form-group">
+						Title:
+						<input type="text" name="title" id="add-stream-title" class="form-control" required>
+					</div>
+					<div class="form-group">
+						Your Announcement:
+						<textarea name="stream" id="add-stream-stream" class="form-control" required></textarea>
+					</div>
+					<div class="form-group">
+						Attachment(optional):
+						<input type="url" name="attachment" id="add-stream-attachment" class="form-control">
+					</div>
+					<div class="form-group">
+						<input type="submit" class="btn btn-dark">
+					</div>
+				</form>
+				<button class="btn btn-danger" id="cancel-add-stream">Cancel</button>
+			</div>
+			<div id="stream-list">
+				{% for stream in streams %}
+					<div class="card stream" id="stream-{{stream.pk}}">
+						<div class="card-body">
+							<h1 class="card-title">{{stream.title}}</h1>
+							<p>Created on {{stream.timestamp}}</p><hr>
+							<div class="card-text">{{stream.announcement}}</div>
+							{% if streamattachment|index:forloop.counter0 %}
+							<p><strong>Attachment:</strong></p>
+							{% endif %}
+							{% for attachment in streamattachment|index:forloop.counter0 %}
+								<a href="{{attachment}}">{{attachment}}</a>
+							{% endfor %}
+							<br>
+							<button class="btn btn-danger" id="delete-stream-button" data-delete-stream={{stream.pk}}>Delete</button>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block script %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="{% static 'index/class_admin.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+{% endblock %}

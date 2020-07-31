@@ -1,0 +1,77 @@
+{% extends 'index/layout.html' %}
+{% block title %}
+Blog
+{% endblock %}
+{% load static %}
+{% block body %}
+<div class="navigation sticky-top">
+	<h1 class="brand-name">Best Educational Foundation</h1>
+	<ul class="nav nav-pills nav-justified">
+	  	<li class="nav-item">
+	    	<a href="{% url 'index' %}" class="nav-link btn btn-light btn-block" id="home-link">Home</a>
+	  	</li>
+	  	{% if user.is_authenticated %}
+	  		{% if usertype == "admin" or usertype == "teacher" %}
+	  			<li class="nav-item">
+	  				<a href="{% url 'dashboard' %}" class="nav-link btn btn-light btn-block">Dashboard</a>
+	  			</li>
+	  		{% elif usertype == "student" %}
+				<li class="nav-item">
+	  				<a href="{% url 'class' %}" class="nav-link btn btn-light btn-block">Class</a>
+	  			</li>
+	  		{% endif %}
+	  	{% endif %}
+	</ul>
+</div>
+<div id="edit-blog" class="container" style="display: none;">
+	<h1>Edit Blog</h1>
+	<form id="edit-blog-form">
+		<input type="hidden" id="edit-blog-id">
+		Title:
+		<div class="form-group">
+			<input type="text" name="title" id="edit-blog-title" class="form-control" required>
+		</div>
+		Your Blog:
+		<div class="form-group">
+			<input type="text" name="content" id="edit-blog-content" class="form-control" required>
+		</div>
+		<div class="form-group">
+			<input type="submit" id="edit-blog-submit" class="btn btn-dark">
+		</div>
+	</form>
+	<button class="btn btn-danger" id="cancel-edit-blog">Cancel</button>
+</div>
+<div class="container">
+	<h1 id="blog-title">Blogs</h1>
+	{% for i in blogs %}
+		<div id="page{{forloop.counter}}" class="page" style="display: none;">
+			{% for blog in i %}
+				<div class="blogs" id="blog">
+					<img src="{{blog.image}}" alt="{{blog.title}}">
+					<h1 id="blog-title-{{blog.pk}}">{{blog.title}}</h1>
+					<h6>{{blog.timestamp}}</h6><hr>
+					<p id="blog-content-{{blog.pk}}">{{blog.content}}</p>
+					{% if usertype == "admin" %}<button id="edit-blog-button" class="btn btn-danger" data-edit="{{blog.pk}}">Edit This Blog</button>{% endif %}
+				</div>
+			{% endfor %}
+		</div>
+	{% endfor %}
+</div>
+{% if totalpage > 0 %}
+	<nav aria-label="Page navigation example" id="paginationList">
+	  	<ul class="pagination justify-content-center">
+	    	<li class="page-item"><button class="page-link" id="previous">Previous</button></li>
+        	{% for info in info %}
+            	<li class="page-item"><button class="page-link" onclick ="showpage({{forloop.counter}})">{{forloop.counter}}</button></li>
+        	{% endfor %}
+        	<li class="page-item"><button class="page-link" id="next">Next</button></li>
+	  	</ul>
+	</nav>
+{% endif %}
+{% endblock %}
+{% block script %}
+
+<script type="text/javascript" src="{% static 'index/blog.js' %}"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+{% endblock %}

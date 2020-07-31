@@ -1,0 +1,88 @@
+{% extends 'index/layout.html' %}
+{% block title %}
+{{assignment.title}}
+{% endblock %}
+{% block body %}
+<div class="navigation sticky-top">
+	<h1 class="brand-name">{{assignment.title}}</h1>
+	<ul class="nav nav-pills nav-justified">
+	  	{% if usertype == "student" %}
+	  	<li class="nav-item">
+	  		<a href="{% url 'class' %}" class="nav-link btn btn-light btn-block">Back to Class</a>
+	  	</li>
+	  	{% else %}
+	  	<li class="nav-item">
+	  		<a href="{% url 'dashboard' %}" class="nav-link btn btn-light btn-block">Back to Dashboard</a>
+	  	</li>
+	  	{% endif %}
+		<li class="nav-item">
+	    	<a href="{% url 'index' %}" class="nav-link btn btn-light btn-block" id="home-link">Home</a>
+	  	</li>
+	  	<li class="nav-item">
+	    	<a href="{% url 'logout' %}" class="nav-link btn btn-light btn-block">Logout</a>
+	  	</li>
+	</ul>
+</div>
+<div class="container">
+	{% if usertype == "student" %}
+	<div class="row">
+		<div class="col-sm-9 assignment">
+			<h1>{{assignment.title}}</h1>
+			<p>Due: {{assignment.duedate}}</p>
+			<hr>
+			<p class="assignment-body">{{assignment.announcement}}</p>
+			<hr>
+		</div>
+		<div class="col-sm-3 submission">
+			<h4>Your Answer:</h4>
+			<form class="answer-submission" method="post" action="{% url 'assignment' id %}">
+				{% csrf_token %}
+				<div class="form-group">
+					{% if not submitted %}
+					<input type="text" name="answer" id="assignment-submission-answer" class="form-control" required>
+					{% else %}
+					<input type="text" name="answer" id="assignment-submission-answer" class="form-control" value="{{submittedvalue}}" disabled>
+					{% endif %}
+				</div>
+				{% if not submitted %}
+				<div class="form-group">
+					<input type="submit" class="btn btn-dark form-control">
+				</div>
+				{% else %}
+				<div class="form-group">
+					<button class="btn btn-secondary form-control" disabled>Submitted</button>
+					<input type="submit" class="btn btn-danger form-control" value="Unsubmit">
+				</div>
+				{% endif %}
+			</form>
+		</div>
+	</div>
+	{% else %}
+	<div class="assignment">
+		<h1>{{assignment.title}}</h1>
+		<p>Due: {{assignment.duedate}}</p>
+		<p>Created by {{assignment.creator}}</p>
+		<hr>
+		<p class="assignment-body">{{assignment.announcement}}</p>
+		<hr>
+	</div>
+	<hr>
+	<table>
+		<tr>
+			<th>Student Name</th>
+			<th>Student ID</th>
+			<th>Answer:</th>
+			<th>Submitted on:</th>
+		</tr>
+		{% for i in submissions %}
+		<tr>
+			<td>{{i.student.username}}</td>
+			<td>{{i.student.userID}}</td>
+			<td>{{i.submission}}</td>
+			<td>{{i.timestamp}}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% endif %}
+</div>
+{% endblock %}

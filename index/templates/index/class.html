@@ -1,0 +1,56 @@
+{% extends 'index/layout.html' %}
+{% load static %}
+{% load index %}
+{% block body %}
+	<div class="navigation sticky-top">
+		<h1 class="brand-name">{{class.classLevel}} - {{class.className}}</h1>
+		<ul class="nav nav-pills nav-justified">
+		  	<li class="nav-item">
+		  		<button class="nav-link btn btn-light btn-block" id="streams-link">Streams</button>
+		  	</li>
+			<li class="nav-item">
+			    <button class="nav-link btn btn-light btn-block" id="classmates-link">Classmates</button>
+			</li>
+			<li class="nav-item">
+		    	<a href="{% url 'index' %}" class="nav-link btn btn-light btn-block" id="home-link">Home</a>
+		  	</li>
+		  	<li class="nav-item">
+		    	<a href="{% url 'logout' %}" class="nav-link btn btn-light btn-block">Logout</a>
+		  	</li>
+		</ul>
+	</div>
+	<div class="container">
+		<div id="streams">
+			{% for announcement in announcements %}
+				<div class="card announcement">
+					<div class="card-body">
+						<h1 class="card-title">{{announcement.title}}</h1>
+						<h6>{% if not announcement.is_assignment %}Announced{% else %}Assigned{% endif %} by your teacher, {{announcement.creator}} on {{announcement.timestamp}}</h6><hr>
+						<p>{{announcement.announcement}}</p>
+						{% if attachments|index:forloop.counter0 %}
+							<p><strong>Attachment:</strong></p>
+						{% endif %}
+						{% for attachment in attachments|index:forloop.counter0 %}
+								<a href="{{attachment}}" target="_blank">{{attachment}}</a>
+							{% endfor %}
+						{% if announcement.is_assignment %}
+							<hr>Due: {{announcement.duedate}}<br>
+							<a href="{% url 'assignment' announcement.pk %}" class="btn btn-dark">See Assignment</a>
+						{% endif %}
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+		<div id="classmates">
+			<h1>Students in this class:</h1>
+			{% for student in students %}
+				<div class="student">
+					{{student.name}}({{student.name.userID}})
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="{% static 'index/class.js' %}"></script>
+{% endblock %}

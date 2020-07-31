@@ -1,0 +1,159 @@
+{% extends 'index/layout.html' %}
+{% load static %}
+{% block script %}
+	<script type="text/javascript" src="{% static 'index/index.js' %}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
+	<script type="text/javascript" src="{% static 'index/blog.js' %}"></script>
+{% endblock %}
+{% block body %}
+<div style="display: none;" id="loggedin">{{user.is_authenticated}}</div>
+<div class="navigation sticky-top">
+	<h1 class="brand-name">Best Educational Foundation</h1>
+	<ul class="nav nav-pills nav-justified">
+	  	<li class="nav-item">
+	    	<button class="nav-link btn btn-light btn-block" id="home-link">Home</button>
+	  	</li>
+	  	<li class="nav-item">
+		    <button class="nav-link btn btn-light btn-block" id="news-link">News</button>
+		 </li>
+		<li class="nav-item">
+		    <a href="blog" class="nav-link btn btn-light btn-block">Blog</a>
+		 </li>
+		 {% if not user.is_authenticated %}
+	  	<li class="nav-item">
+	    	<button class="nav-link btn btn-light btn-block" id="login-link">Login</button>
+	  	</li>
+	  	{% else %}
+	  	{% if usertype == "admin" or usertype == "teacher" %}
+		  	<li class="nav-item">
+		    	<a href="{% url 'dashboard' %}" class="nav-link btn btn-light btn-block" id="login-link">Dashboard</a>
+		  	</li>
+		 {% elif usertype == "student" %}
+		  	<li class="nav-item">
+		    	<a href="{% url 'class' %}" class="nav-link btn btn-light btn-block" id="login-link">Class</a>
+		  	</li>
+	  	{% endif %}
+	  	{% endif %}
+	</ul>
+</div>
+<div id="home">
+	<img src="{% static 'index/img/a.jpg' %}">
+	<div class="container">
+		<div class="row">
+			<div class="col-4 class-level">
+				<div class="card">
+				  <img src="{% static 'index/img/b.jpg' %}" class="card-img-top" alt="...">
+				  <div class="card-body">
+				    <p class="card-text text-center">Elementary School</p>
+				  </div>
+				</div>
+			</div>
+			<div class="col-4 class-level">
+				<div class="card">
+				  <img src="{% static 'index/img/c.jpg' %}" class="card-img-top" alt="...">
+				  <div class="card-body">
+				    <p class="card-text text-center">Junior High School</p>
+				  </div>
+				</div>
+			</div>
+			<div class="col-4 class-level">
+				<div class="card">
+				  <img src="{% static 'index/img/d.jpg' %}" class="card-img-top" alt="...">
+				  <div class="card-body">
+				    <p class="card-text text-center">High School</p>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="profile">
+		<div class="container">
+			<h1 class="profile-title">School Profile</h1>
+			<div class="row">
+				<div class="col-sm-6">
+					<img src="{% static 'index/img/e.jpg' %}">
+				</div>
+				<div class="col-sm-6 profile-description">
+					<h1 class="profile-title2">Best Educational Foundation</h1>
+					<p class="profile-description-since">Since 2020</p>
+					<p class="profile-description-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur hendrerit nulla quis nisi pretium rutrum. Mauris arcu nisl, imperdiet quis quam eu, dapibus condimentum mi. Nunc maximus nunc ut nunc lobortis consequat. Quisque consectetur posuere congue. Aliquam in nisi felis. Nunc dignissim interdum pulvinar. Sed eget auctor sapien, sit amet mattis tellus. Donec rhoncus, diam vitae condimentum blandit, quam massa elementum diam, id varius augue sapien nec mauris. Phasellus sed neque non leo laoreet tincidunt. Phasellus et placerat enim, in eleifend neque.</p>
+					<p class="profile-description-text">Nulla ultrices quam vitae lectus euismod, sit amet consequat tortor hendrerit. Etiam id nunc vitae velit egestas rhoncus. Duis vulputate pharetra aliquam. Vivamus nec nisi et purus volutpat varius ac et lorem. Fusce fringilla sapien sed pharetra porta. Nullam condimentum varius suscipit. Suspendisse non diam vel mauris placerat lacinia vel sit amet ante.</p>
+					<p class="profile-description-text">Maecenas bibendum, tortor sit amet venenatis hendrerit, erat quam laoreet velit, non tristique lacus metus sit amet nibh. Proin at elementum lacus, vestibulum efficitur felis. Nullam luctus elit vitae nibh tincidunt feugiat. Donec ut feugiat massa. Maecenas mauris nibh, molestie eu dolor vitae, condimentum tempor ex. Duis sapien sapien, dignissim vitae consectetur in, sagittis a quam. Praesent scelerisque quam quis metus ornare bibendum.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="news" class="container">
+	<div id="edit-blog" class="container" style="display: none;">
+		<h1>Edit Blog</h1>
+		<form id="edit-blog-form">
+			<input type="hidden" id="edit-blog-id">
+			Title:
+			<div class="form-group">
+				<input type="text" name="title" id="edit-blog-title" class="form-control" required>
+			</div>
+			Your Blog:
+			<div class="form-group">
+				<input type="text" name="content" id="edit-blog-content" class="form-control" required>
+			</div>
+			<div class="form-group">
+				<input type="submit" id="edit-blog-submit" class="btn btn-dark">
+			</div>
+		</form>
+		<button class="btn btn-danger" id="cancel-edit-blog">Cancel</button>
+	</div>
+	<h1 id="blog-title">Blogs</h1>
+	{% for i in news %}
+		<div id="page{{forloop.counter}}" class="page">
+			{% for blog in i %}
+				<div class="blogs" id="blog">
+					<img src="{{blog.image}}" alt="{{blog.title}}">
+					<h1 id="blog-title-{{blog.pk}}">{{blog.title}}</h1>
+					<h6>{{blog.timestamp}}</h6><hr>
+					<p id="blog-content-{{blog.pk}}">{{blog.content}}</p>
+					{% if usertype == "admin" %}<button id="edit-blog-button" class="btn btn-danger" data-edit="{{blog.pk}}">Edit This Blog</button>{% endif %}
+				</div>
+			{% endfor %}
+		</div>
+	{% endfor %}
+	{% if totalpage > 0 %}
+		<nav aria-label="Page navigation example" id="paginationList">
+		  	<ul class="pagination justify-content-center">
+		    	<li class="page-item"><button class="page-link" id="previous">Previous</button></li>
+	        	{% for info in info %}
+	            	<li class="page-item"><button class="page-link" onclick ="showpage({{forloop.counter}})">{{forloop.counter}}</button></li>
+	        	{% endfor %}
+	        	<li class="page-item"><button class="page-link" id="next">Next</button></li>
+		  	</ul>
+		</nav>
+	{% endif %}
+</div>
+<div id="login" class="container login">
+	{% if user.is_authenticated %}
+		<h1 class="text-center">You are Signed in</h1>
+		<center>
+			{% if usertype != "student" %}<a class="btn btn-dark" href="{% url 'dashboard' %}">go to Dashboard</a>
+			{% else %}<a class="btn btn-dark" href="{% url 'class' %}">go to Class</a>
+			{% endif %}
+		</center>
+	{% else %}
+	<h2 class="text-center">Login</h2>
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+    <div id="message"></div>
+    <form id="login-form">
+    	{% csrf_token %}
+        <div class="form-group">
+            <input autofocus class="form-control" type="text" name="username" placeholder="Username" id="input-username">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" name="password" placeholder="Password" id="input-password">
+        </div>
+        <input class="btn btn-dark btn-block" type="submit" value="Login">
+    </form>
+    {% endif %}
+</div>
+
+{% endblock %}
